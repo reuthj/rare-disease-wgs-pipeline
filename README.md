@@ -48,6 +48,7 @@ The project is designed to function both as a rare-disease variant prioritizatio
 
 ### Pipeline overview
 
+```text
 🧬 Input VCF
    │
    ▼
@@ -73,7 +74,7 @@ The project is designed to function both as a rare-disease variant prioritizatio
    │
    ▼
 🔎 Stage 7 — Final Report & Human Review
-
+```
 ---
 
 ### What each stage does
