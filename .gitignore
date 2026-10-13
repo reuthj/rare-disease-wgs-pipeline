@@ -1,0 +1,66 @@
+# Local inputs, downloaded resources and generated outputs
+/data/
+/results/
+/logs/
+/benchmarks/
+/caches/
+/.snakemake/
+/releases/
+/tmp/
+/scratch/
+/gnomad.joint.v4.1.sites.chr*.vcf.bgz.tbi
+
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.cram
+*.bai
+
+# Environment
+.env
+.env.*
+!.env.example
+.venv/
+/.conda/
+/config/case_context.yaml
+/config/config.example.yaml
+/config/release_files.json
+/scripts/build_release.py
+/docs/release.md
+/tests/
+/workflow/scripts/stage3_group_estimate.py
+/config/*.local.yaml
+/config/*.local.json
+/.aws/
+/.ssh/
+/.codex/
+/.agents/
+/.vscode/
+/.idea/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Development records and external project states
+/agent_reports/
+/agent_spec/
+/AGENTS.md
+/docs/input_inspection.md
+/Reference_Project/
+/Refrence_Project/
+/Working_Project/
+/Golden_Baseline/
+/GoldenBaseline/
+
+# Temporary and backup files
+*.partial
+*.partial.*
+*.tmp
+*.bak
+*.orig
+*~
+.DS_Store

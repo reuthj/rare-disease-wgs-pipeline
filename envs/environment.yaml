@@ -1,0 +1,36 @@
+name: rare-wgs
+channels:
+  - conda-forge
+  - bioconda
+  - nodefaults
+dependencies:
+  - python=3.12
+  - pandas=2.3.3
+  - numpy=2.5
+  - pyarrow=24
+  - pysam=0.23.3
+  - pyyaml=6
+  - requests=2.34
+  - openpyxl=3.1
+  - setuptools<81
+  - snakemake=9.22.0
+  - bcftools=1.23.1
+  - htslib=1.23.1
+  - samtools=1.23.1
+  - pybigwig=0.3.25
+  - coreutils
+  - gzip
+  - perl=5.32.1
+  - perl-dbi=1.651
+  - perl-bioperl-core=1.7.8
+  - perl-module-build=0.4234
+  - perl-json=4.11
+  - perl-set-intervaltree=0.12
+  - perl-text-csv
+  - perl-perlio-gzip
+  - perl-io-compress
+  - perl-sereal=5.009
+  - perl-list-moreutils
+  - c-compiler
+  - sysroot_linux-64=2.17
+  - perl-libwww-perl

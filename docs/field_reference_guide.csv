@@ -1,0 +1,43 @@
+Column number,Column name,Explanation
+1,Chr,"Chromosome containing the variant, such as 1, X, or MT."
+2,Pos,1-based genomic coordinate in GRCh38
+3,REF_ALT,"Reference and alternate alleles, shown as reference>alternate (for example, A>G)."
+4,rsID,dbSNP identifier for the variant; blank when no identifier is available.
+5,Gene_symbol,Gene selected for the winning scoring hypothesis (Scored_gene). The | CASE marker means this selected gene is listed in the case context; it does not by itself establish a diagnosis.
+6,Secondary_gene,"Indicates whether the variant is also in secondary-finding gene; may include the associated condition and inheritance model. If TRUE it dosent neccesarly means its reportable, this depnds on pathgenity and inheritence fit."
+7,Transcript ID,"Transcripts belonging to Scored_gene. The selected Scored_transcript is highlighted in blue, and MANE transcripts are bold."
+8,Transcript_biotype,"Biological type of the Scored_gene transcript, such as protein_coding."
+9,Consequences,"Predicted sequence consequences for Scored_gene transcripts, such as missense_variant or intron_variant."
+10,HGVS,HGVS coding (c.) and protein (p.) descriptions for the variant on Scored_gene transcripts.
+11,Gene_context,"Variant location in the gene or transcript, such as EXON 2/3, INTRON, or UPSTREAM."
+12,Regulatory_context,"Regulatory annotations associated with the variant from ENCODE and ensembel, such as promoter or enhancer context."
+13,Protein_context,"Known protein domains for Scored_gene transcripts, such as Pfam, PANTHER, or PROSITE domains."
+14,Genotype,"Combined sample genotype and read support: GT | alternate reads/total depth | VAF (for example, 0/1 | 9/20 | 0.45)."
+15,gnomAD_AF,"Global gnomAD joint allele frequency for nuclear variants; MT rows use mitochondrial AF. Nuclear missing AF displays as 0. Rarity scoring also uses population-group maximum AF, retained in the scored table."
+16,gnomAD counts,Nuclear counts: heterozygotes | homozygotes; X rows also include hemizygotes. MT rows instead show labelled homoplasmic_AF and heteroplasmic_AF values when available.
+17,Inheritance_category,"Candidate inheritance model such as AD, AR_homozygous, AR_compound_heterozygous, X_linked, Mosaic, or Mitochondrial"
+18,ClinVar,"ClinVar classification and associated condition, when available."
+19,CADD,"CADD PHRED score. Below 10 is low; 20 or higher ranks among the top 1 percent, and 30 or higher among the top 0.1 percent of possible single nucleotide substitutions by predicted deleteriousness."
+20,Conservation,"Combines phyloP and phastCons conservation. phyloP below 0 suggests accelerated evolution; values near 0 indicate little conservation, 1 or higher stronger conservation, and 2.5 or higher the top scoring range. phastCons ranges from 0 to 1; values near 0 indicate low conservation, around 0.45 moderate conservation, and 0.75 or higher the top scoring range."
+21,LOEUF,Gene-level loss-of-function observed/expected upper-bound fraction for Scored_gene. Below 0.35 indicates strong constraint; 0.35 to 0.90 indicates intermediate constraint; above 0.90 indicates weaker constraint.
+22,Missense_constraint,"Gene-level missense constraint for Scored_gene, shown as observed/expected (O/E) and Z score. O/E near 1 is close to expectation; lower O/E indicates greater depletion of missense mutations. Z below 0 indicates little or no depletion; Z of 3 or higher indicates strong depletion."
+23,Evidence_routes,"Annotation-supported routes across selected-gene transcripts, such as MISSENSE, LOF, SPLICE, INFRAME and REGULATORY. The selected scoring route is first and bold; COMMON-only evidence has no named route here."
+24,Route scores,"Route annotation evidence: MISSENSE: REVEL, AlphaMissense and available SIFT; SPLICE: SpliceAI and transcript splice distance; LOF: LOFTEE/NMD; INFRAME: functional evidence; REGULATORY: annotations/ReMM. Protein domains (MISSENSE/INFRAME), LOEUF and MANE (LOF), and transcript TSS distance (REGULATORY) also contribute to scoring but are not all repeated here. This is evidence text, not a complete numerical breakdown."
+25,Nearest_splice_distance,"Absolute distance in bases to the nearest splice site among Stage 3 transcripts, followed by transcript ID. Shown only when the distance is <50 bases and the transcript belongs to the selected gene; otherwise blank."
+26,Nearest_TSS_distance,"Absolute distance in bases to the nearest transcription start site among Stage 3 transcripts, followed by transcript ID. The nearest transcript may belong to a different gene from Scored_gene; scoring uses transcript-specific TSS evidence."
+27,Disease_associations,"Known disease associations for Scored_gene, with evidence strength when available."
+28,Inheritance_and_mechanism,Reported inheritance pattern and disease mechanism for conditions associated with Scored_gene.
+29,ClinVar_pathogenic_variant_landscape,"Scored_gene ClinVar summary with the fraction and count of pathogenic or likely pathogenic variants, plus counts by consequence."
+30,Gene_HPO_terms,Phenotype terms associated with diseases linked to Scored_gene.
+31,Matched_HPO_terms,Patient HPO terms matched to selected-gene disease phenotypes by exact identity or an HPO ancestor/descendant relationship; shown as patient term <-> disease term.
+32,Literature_support,"Summary of reviewed literature evidence for the gene or disease, including human cases and functional or animal studies when available."
+33,Top_publications,"Selected publication references relevant to the candidate gene or disease, such as PMID, year, title, and DOI."
+34,Pathogenicity_evidence_coverage,"Observed evidence weight for the selected transcript and route, divided by 100 (0-1). Missing-evidence defaults and the ClinVar adjustment do not add coverage; this is not a probability."
+35,Variant_pathogenicity_score,"0-100 pathogenicity score for the winning transcript and route: CADD, conservation, route evidence and main ClinVar adjustment. Missing evidence may receive neutral defaults; MT evaluation is partial."
+36,Inheritance_score,"0-100 fit to the case's expected inheritance. Exact matches score 100, except compound-heterozygous matches score 80 because phase is unconfirmed. Missing context/category scores 50; an approved alternative-gene AD fallback against expected AR can score 25. Gene-disease inheritance fit is assessed separately."
+37,Gene_disease_evidence_score,"0-100 selected-gene evidence score combining GenCC association strength, gene-disease inheritance compatibility, ClinVar consequence/count/fraction evidence and literature support."
+38,Case_relevance_score,0-100 hierarchical case relevance: a case-gene or disease-name match scores 100; otherwise broad disease-domain and HPO matches are considered with documented defaults. These signals are not simply added.
+39,Rarity_score,"0-100 rarity under the selected inheritance model, using the higher of global and population-group maximum AF plus relevant het/hom/X-hemi counts. Compound alleles use het and hom support. MT rarity is unavailable and uses the existing 50/100 default."
+40,Compound_pair_score,Mean of the two selected compound partners' individual Final_score values. Qualifying pair scores guide pair/gene ranking; individual Final_score remains unchanged. Workbook order also prioritises case genes and groups by gene. This field appears only on sheets with compound-pair columns.
+41,Scored_compound_partner,"Selected reciprocal compound partner, in chromosome:position|REF>ALT format. Blank when no pair is selected, including alternative-gene AD fallbacks. Present only on sheets with compound-pair columns."
+42,Final_score,Weighted 0-100 candidate score: 30% pathogenicity + 20% inheritance + 25% gene-disease evidence + 15% case relevance + 10% rarity. Missing-evidence defaults can contribute; the score is not a probability of diagnosis.

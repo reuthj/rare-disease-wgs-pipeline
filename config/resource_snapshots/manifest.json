@@ -1,0 +1,28 @@
+{
+  "profile": "preserved-comparison",
+  "snapshots": [
+    {
+      "id": "gencc",
+      "file": "gencc-submissions.tsv",
+      "version": "Preserved export; acquisition date unknown",
+      "sha256": "6dfd4f17df80363a323c4798a7263aa34689ab8565886635abff879892a08559",
+      "bytes": 26461983,
+      "original_sources": [
+        "https://thegencc.org/download/action/submissions-export-tsv?format=new"
+      ]
+    },
+    {
+      "id": "acmg_sf",
+      "file": "acmg_sf_v3.3_clingen.csv",
+      "version": "3.3 export 2026-09-06",
+      "sha256": "8c9babd670d3796c641c9c11ae30e90a82b0b5e2ff701c49de67fc8e31bcd0e5",
+      "bytes": 16497,
+      "original_sources": [
+        "https://search.clinicalgenome.org/kb/reports/acmg-activity-summary-report"
+      ]
+    }
+  ],
+  "purpose": "Pinned GenCC and ClinGen exports for automatic resource setup with the default catalog.",
+  "archive": "preserved_gene_evidence_snapshots.tar.gz",
+  "archive_sha256": "8fae4f33892f6447ba850ffe793fb54d6bb05f9d7c6f5aea1e7d1443814b396a"
+}

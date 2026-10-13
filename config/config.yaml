@@ -1,0 +1,127 @@
+conda:
+    "envs/environment.yaml"
+    
+project:
+  assembly: "GRCh38"
+
+input_vcf:
+
+analysis:
+  mode: "proband_only"
+
+reference:
+  fasta: "data/reference/GRCh38_no_alt_plus_hs38d1_no_chr.fasta"
+
+steps:
+  inspect: true
+  validate_reference: true
+  normalize: true
+
+resources:
+  acmg_sf:
+    version: "3.3"
+    file: "data/resources/acmg_sf_v3.3_clingen.csv"
+  gencode: "data/reference/annotation/gencode.v50.annotation.gtf.gz"
+
+# =========================================================
+# Stage 1 — Minimal annotation + broad routing
+# =========================================================
+
+stage1:
+  routing:
+    max_gnomad_cache_af: 0.25
+
+  vep:
+    version: "116.1"
+    cache_dir: "data/reference/vep_cache"
+    cache_version: 116
+    assembly: "GRCh38"
+    species: "homo_sapiens"
+    threads: 16
+    buffer_size: 5000
+
+
+# =========================================================
+# Stage 2 — Safety annotation + rarity filtering
+# =========================================================
+
+stage2:
+  filtering:
+    max_grpmax_af: 0.03
+    clinvar_rescue_max_af: 0.25
+
+  vep:
+    pick_order: "mane_select,mane_plus_clinical,canonical,appris,tsl,biotype,ccds,rank,length"
+
+  clinvar:
+    vcf: "data/reference/clinvar_GRCh38.normalized.vcf.gz"
+
+  gnomad:
+    version: "4.1"
+    url_template: "https://storage.googleapis.com/gcp-public-data--gnomad/release/4.1/vcf/joint/gnomad.joint.v4.1.sites.chr{chrom}.vcf.bgz"
+    index_cache_dir: "data/resources/gnomad/joint/v4.1/indexes"
+    mt_vcf: "data/resources/gnomad/mitochondrial/v3.1/gnomad.genomes.v3.1.sites.chrM.vcf.bgz"
+    
+  encode:
+    ccre_bed: "data/reference/annotation/encode_ccre.GRCh38.bed.gz"
+
+
+# =========================================================
+# Stage 4 — variant level evidence
+# =========================================================
+
+stage4:
+  spliceai_conda_env: "spliceai-env"
+  # Optional exact environment directory, relative to project root or absolute.
+  # When unset, prefer the named environment beside the running rare-wgs env.
+  spliceai_conda_prefix: ".conda/envs/spliceai-env"
+
+# =========================================================
+# Stage 5 — gene, disease, phenotype and literature evidence
+# =========================================================
+
+stage5:
+  enabled: true
+
+  resources:
+    gencc_submissions: "data/resources/gencc-submissions.tsv"
+    hpo_annotations: "data/resources/phenotype.hpoa"
+    hpo_ontology: "data/resources/hp.json"
+    gnomad_constraint: "data/resources/gnomad/constraint/v4.1.1/gnomad.v4.1.1.constraint_metrics.tsv.bgz"
+    clinvar_vcf: "data/resources/clinvar/clinvar_20260913.vcf.gz"
+    clinvar_index: "data/resources/clinvar/clinvar_20260913.vcf.gz.tbi"
+    clinvar_md5: "data/resources/clinvar/clinvar_20260913.vcf.gz.md5"
+
+  europe_pmc:
+    base_url: "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+    result_type: "core"
+    page_size: 5
+    max_queries_per_context: 4
+    max_abstracts: 8
+    max_top_publications: 3
+    rescue_min_usable_records: 3
+    timeout_seconds: 30
+    max_retries: 3  # Three retries after the initial request (four total attempts).
+
+  cache:
+    enabled: true
+    directory: "results/intermediate/stage5/cache"
+    force_refresh: false
+
+  progress:
+    enabled: true
+
+  literature:
+    cache_dir: "results/intermediate/stage5/cache/europe_pmc"
+    progress_every: 25
+
+stage6:
+  input_table: "results/tables/stage5_gene_evidence_complete.csv"
+  case_context: "config/case_context.yaml"
+  output_table: "results/tables/stage6_ranked_candidates.csv"
+  progress_every: 100
+
+stage7:
+  input_table: "results/tables/stage6_ranked_candidates.csv"
+  case_context: "config/case_context.yaml"
+  output_workbook: "results/tables/rare_disease_variant_review.xlsx"

@@ -1,0 +1,96 @@
+configfile: "config/config.yaml"
+
+
+# =========================================================
+# Helper functions
+# =========================================================
+
+def preparation_outputs(wildcards):
+    """
+    Define which preparation outputs are required according
+    to the project configuration.
+    """
+
+    outputs = []
+
+    if config["steps"].get("inspect", True):
+        outputs.append(
+            "results/qc/input_summary.tsv"
+        )
+
+    if config["steps"].get("validate_reference", False):
+        outputs.append(
+            "results/qc/reference_validation.tsv"
+        )
+
+    if config["steps"].get("normalize", False):
+        outputs.extend([
+            "data/processed/normalized.vcf.gz",
+            "data/processed/normalized.vcf.gz.csi",
+            "results/qc/normalized_stats.txt"
+        ])
+
+    return outputs
+
+
+def analysis_vcf():
+    """
+    Return the VCF that downstream analysis should use.
+
+    If normalization is enabled:
+        use the normalized VCF.
+
+    Otherwise:
+        use the original input VCF.
+    """
+
+    if config["steps"].get("normalize", False):
+        return "data/processed/normalized.vcf.gz"
+
+    return config["input_vcf"]
+
+
+# =========================================================
+# Main targets
+# =========================================================
+
+rule all:
+    input:
+        preparation_outputs,
+        "results/qc/normalized_stats.txt",
+        "results/qc/input_summary.tsv",
+        "results/qc/reference_validation.tsv",
+        "data/processed/normalized.vcf.gz",
+        "data/processed/normalized.vcf.gz.csi",
+        "results/variants/stage1_routed.vcf.gz",
+        "results/variants/stage1_routed.vcf.gz.csi",
+        "results/tables/stage2_safety_annotated.parquet",
+        "results/variants/stage3_filtered_keys.tsv.gz",
+        "results/tables/stage3_candidates.csv",
+        "results/tables/stage4_variant_evidence.csv",
+        "results/tables/stage5_gene_evidence_complete.csv",
+        "results/tables/stage6_ranked_candidates.csv",
+        "results/tables/rare_disease_variant_review.xlsx"
+
+
+rule prepare_vcf:
+    input:
+        preparation_outputs
+
+
+# =========================================================
+# Workflow modules
+# =========================================================
+
+include: "rules/inspect_vcf.smk"
+include: "rules/validate_vcf.smk"
+include: "rules/normalize_vcf.smk"
+include: "rules/stage1_minimal_annotation.smk"
+include: "rules/stage2_safety_annotation.smk"
+include: "rules/stage3_filter_and_route.smk"
+include: "rules/stage4_variant_evidence.smk"
+include: "rules/stage5_gene_evidence.smk"
+include: "rules/stage6_calculate_score.smk"
+include: "rules/stage7_final_report.smk"
+
+

@@ -1,0 +1,557 @@
+{
+  "schema_version": 1,
+  "profile": "preserved-comparison",
+  "resources": [
+    {
+      "id": "reference",
+      "version": "GRCh38 analysis set GCA_000001405.15",
+      "purpose": "Allele normalization and splice sequence",
+      "sources": [
+        "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14/GRCh38_major_release_seqs_for_alignment_pipelines/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz"
+      ],
+      "raw": "data/reference/GCA_000001405.15_GRCh38_no_alt_plus_hs38d1_analysis_set.fna.gz",
+      "processed": "data/reference/GRCh38_no_alt_plus_hs38d1_no_chr.fasta",
+      "kind": "fasta",
+      "format": "gzip",
+      "indexes": [
+        ".fai",
+        ".fxi"
+      ],
+      "consumers": [
+        "normalize_vcf",
+        "stage1_vep",
+        "stage2_vep_context",
+        "stage4_variant_evidence"
+      ],
+      "config_key": "reference.fasta",
+      "required": true,
+      "dependencies": [],
+      "recipe": "fasta"
+    },
+    {
+      "id": "gencode",
+      "version": "50",
+      "purpose": "Transcript and splice annotation",
+      "sources": [
+        "https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_human/release_50/gencode.v50.annotation.gtf.gz"
+      ],
+      "raw": "data/reference/annotation/gencode.v50.annotation.gtf.gz",
+      "processed": "data/reference/annotation/gencode.v50.annotation.gtf.gz",
+      "kind": "copy",
+      "format": "gtf",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "config_key": "resources.gencode",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "83fba3e9b03f0b8c958f3595c6c350adc55f468abf8b0e47b6d5284cfe13a453",
+      "gtf_release_marker": "version 50"
+    },
+    {
+      "id": "ccre",
+      "version": "Registry V4 GRCh38",
+      "purpose": "Regulatory interval annotation",
+      "sources": [
+        "https://downloads.wenglab.org/Registry-V4/GRCh38-cCREs.bed"
+      ],
+      "raw": "data/reference/annotation/GRCh38-cCREs.raw.bed",
+      "processed": "data/reference/annotation/encode_ccre.GRCh38.bed.gz",
+      "kind": "ccre",
+      "format": "bed6",
+      "indexes": [
+        ".tbi"
+      ],
+      "consumers": [
+        "stage2_vep_context"
+      ],
+      "config_key": "stage2.encode.ccre_bed",
+      "recipe": "columns 1-3; column5:column6; sort -k1,1V -k2,2n; BGZF; tabix BED",
+      "required": true,
+      "dependencies": [],
+      "sha256": "a292aea64edea7efbef275140b78116efdef1bea5b729dc9e5513421dc868dda"
+    },
+    {
+      "id": "gnomad_mt",
+      "version": "3.1",
+      "purpose": "Mitochondrial allele frequencies",
+      "sources": [
+        "https://storage.googleapis.com/gcp-public-data--gnomad/release/3.1/vcf/genomes/gnomad.genomes.v3.1.sites.chrM.vcf.bgz"
+      ],
+      "raw": "data/resources/gnomad/mitochondrial/v3.1/gnomad.genomes.v3.1.sites.chrM.vcf.bgz",
+      "processed": "data/resources/gnomad/mitochondrial/v3.1/gnomad.genomes.v3.1.sites.chrM.vcf.bgz",
+      "kind": "copy",
+      "format": "vcf",
+      "indexes": [
+        ".tbi"
+      ],
+      "supplied_index": true,
+      "consumers": [
+        "stage2_add_gnomad"
+      ],
+      "config_key": "stage2.gnomad.mt_vcf",
+      "required": true,
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "507e4a1fab8c8d2dfb5d77239b0fb31e3db92634519f1d6cd9b9ff38df181f99"
+    },
+    {
+      "id": "clinvar",
+      "version": "2026-09-13 GRCh38",
+      "purpose": "Clinical assertions and rescue",
+      "sources": [
+        "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/weekly/clinvar_20260913.vcf.gz"
+      ],
+      "raw": "data/resources/clinvar/clinvar_20260913.vcf.gz",
+      "processed": "data/reference/clinvar_GRCh38.normalized.vcf.gz",
+      "kind": "clinvar",
+      "format": "vcf",
+      "indexes": [
+        ".tbi"
+      ],
+      "raw_index": true,
+      "md5_source": true,
+      "dependencies": [
+        "reference"
+      ],
+      "consumers": [
+        "stage2_add_clinvar",
+        "stage4_variant_evidence",
+        "stage5_gene_evidence"
+      ],
+      "config_key": "stage2.clinvar.vcf",
+      "recipe": "Primary 1-22,X,Y,MT; MT->M; bcftools norm -c e -m -any against project FASTA; BGZF/tabix",
+      "required": true,
+      "sha256": "47ea3626cd90154d82304afe3b8f717aab2557a1330f4ea2c809892386e08d49"
+    },
+    {
+      "id": "alphamissense",
+      "version": "Zenodo 8208688 hg38",
+      "purpose": "Missense prediction",
+      "sources": [
+        "https://zenodo.org/records/8208688/files/AlphaMissense_hg38.tsv.gz?download=1"
+      ],
+      "raw": "data/resources/alphamissense/AlphaMissense_hg38.tsv.gz",
+      "processed": "data/resources/alphamissense/AlphaMissense_hg38.tsv.gz",
+      "kind": "copy",
+      "format": "alphamissense",
+      "indexes": [
+        ".tbi"
+      ],
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "0516cfd71c0767ac8f9c469252d429000e94e02c008b6e3a46d4b4646fcd3475"
+    },
+    {
+      "id": "alphamissense_isoforms",
+      "version": "Zenodo 8208688 hg38",
+      "purpose": "Missense prediction",
+      "sources": [
+        "https://zenodo.org/records/8208688/files/AlphaMissense_isoforms_hg38.tsv.gz?download=1"
+      ],
+      "raw": "data/resources/alphamissense/AlphaMissense_isoforms_hg38.tsv.gz",
+      "processed": "data/resources/alphamissense/AlphaMissense_isoforms_hg38.tsv.gz",
+      "kind": "copy",
+      "format": "alphamissense",
+      "indexes": [
+        ".tbi"
+      ],
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "4db999ce891706be80babdad849fe4d513f5431409c1065f2419b74d35db24d7"
+    },
+    {
+      "id": "constraint",
+      "version": "4.1.1",
+      "purpose": "Gene constraint",
+      "sources": [
+        "https://storage.googleapis.com/gcp-public-data--gnomad/release/4.1.1/constraint/gnomad.v4.1.1.constraint_metrics.tsv.bgz"
+      ],
+      "raw": "data/resources/gnomad/constraint/v4.1.1/gnomad.v4.1.1.constraint_metrics.tsv.bgz",
+      "processed": "data/resources/gnomad/constraint/v4.1.1/gnomad.v4.1.1.constraint_metrics.tsv.bgz",
+      "kind": "copy",
+      "format": "constraint",
+      "consumers": [
+        "stage5_gene_evidence"
+      ],
+      "config_key": "stage5.resources.gnomad_constraint",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "91b5cdfc9a9fb8d3b6c28c3b884b9f3e71dcc2da4805b428a9b763d997597ff9"
+    },
+    {
+      "id": "gencc",
+      "version": "Preserved export; acquisition date unknown",
+      "purpose": "Gene-disease assertions",
+      "sources": [
+        "https://thegencc.org/download/action/submissions-export-tsv?format=new"
+      ],
+      "raw": "data/resources/gencc-submissions.tsv",
+      "processed": "data/resources/gencc-submissions.tsv",
+      "kind": "copy",
+      "format": "gencc",
+      "sha256": "6dfd4f17df80363a323c4798a7263aa34689ab8565886635abff879892a08559",
+      "consumers": [
+        "stage5_gene_evidence"
+      ],
+      "config_key": "stage5.resources.gencc_submissions",
+      "limitation": "The default profile imports the checksum-verified bundled export automatically. Live endpoint content may differ; --snapshot-dir can optionally supply a matching archival file instead.",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "hpo",
+      "version": "2026-09-01",
+      "purpose": "Phenotype ontology",
+      "sources": [
+        "https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-09-01/hp.json"
+      ],
+      "raw": "data/resources/hp.json",
+      "processed": "data/resources/hp.json",
+      "kind": "copy",
+      "format": "hpo",
+      "sha256": "a7b3a012e7b4007a35a7cf8da35f2373b54cc16907f80d13d62470d31f833501",
+      "consumers": [
+        "stage5_gene_evidence"
+      ],
+      "config_key": "stage5.resources.hpo_ontology",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "hpoa",
+      "version": "2026-09-02 annotations in v2026-09-01 release",
+      "purpose": "Disease phenotype associations",
+      "sources": [
+        "https://github.com/obophenotype/human-phenotype-ontology/releases/download/v2026-09-01/phenotype.hpoa"
+      ],
+      "raw": "data/resources/phenotype.hpoa",
+      "processed": "data/resources/phenotype.hpoa",
+      "kind": "copy",
+      "format": "hpoa",
+      "sha256": "e89aa39c8f97bf5a52c5d160f9250a603681d630ade8ec2679d84ac5aece1f72",
+      "consumers": [
+        "stage5_gene_evidence"
+      ],
+      "config_key": "stage5.resources.hpo_annotations",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "acmg_sf",
+      "version": "3.3 export 2026-09-06",
+      "purpose": "Secondary findings reporting",
+      "sources": [
+        "https://search.clinicalgenome.org/kb/reports/acmg-activity-summary-report"
+      ],
+      "raw": "data/resources/acmg_sf_v3.3_clingen.csv",
+      "processed": "data/resources/acmg_sf_v3.3_clingen.csv",
+      "kind": "copy",
+      "format": "acmg",
+      "sha256": "8c9babd670d3796c641c9c11ae30e90a82b0b5e2ff701c49de67fc8e31bcd0e5",
+      "consumers": [
+        "stage6_score",
+        "stage7_final_report"
+      ],
+      "config_key": "resources.acmg_sf.file",
+      "limitation": "The default profile imports the checksum-verified bundled export automatically. Live export creation date/content may differ; --snapshot-dir can optionally supply a matching archival file instead.",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "report_marker": "c3.3"
+    },
+    {
+      "id": "orphanet6",
+      "version": "2026-06-23 (July 2026 knowledge base)",
+      "purpose": "Case genes",
+      "sources": [
+        "https://www.orphadata.com/data/xml/en_product6.xml"
+      ],
+      "raw": "data/resources/orphanet/en_product6.xml",
+      "processed": "data/resources/orphanet/en_product6.xml",
+      "kind": "copy",
+      "format": "orphanet6",
+      "sha256": "f1c039f78683beea7ca5b34d1c01c4ec98f80e8ca488eee69770074db1020e39",
+      "consumers": [
+        "set_case_context"
+      ],
+      "license": "CC-BY-4.0",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "orphanet1",
+      "version": "2026-06-23 (July 2026 knowledge base)",
+      "purpose": "MONDO to ORPHA mappings",
+      "sources": [
+        "https://www.orphadata.com/data/xml/en_product1.xml"
+      ],
+      "raw": "data/resources/orphanet/en_product1.xml",
+      "processed": "data/resources/orphanet/en_product1.xml",
+      "kind": "copy",
+      "format": "orphanet1",
+      "sha256": "df8d562a0c6011af36a74eb4000ce81ca7d723e8031010819fb71727c0962bbb",
+      "consumers": [
+        "set_case_context"
+      ],
+      "license": "CC-BY-4.0",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "vep_cache",
+      "version": "116 GRCh38 GENCODE50",
+      "purpose": "Offline annotation",
+      "sources": [
+        "https://ftp.ensembl.org/pub/release-116/variation/indexed_vep_cache/homo_sapiens_vep_116_GRCh38.tar.gz"
+      ],
+      "raw": "data/reference/vep_cache/homo_sapiens_vep_116_GRCh38.tar.gz",
+      "processed": "data/reference/vep_cache/homo_sapiens/116_GRCh38",
+      "kind": "vep_cache",
+      "format": "tar",
+      "consumers": [
+        "stage1_vep",
+        "stage2_vep_context"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "vep_cache",
+      "cache_gencode": "GENCODE50",
+      "assembly": "GRCh38",
+      "cache_version": 116
+    },
+    {
+      "id": "nmd_plugin",
+      "version": "release/116",
+      "purpose": "Documented optional offline plugin",
+      "sources": [
+        "https://raw.githubusercontent.com/Ensembl/VEP_plugins/release/116/NMD.pm"
+      ],
+      "raw": "data/reference/vep_plugins/NMD.pm",
+      "processed": "data/reference/vep_plugins/NMD.pm",
+      "kind": "copy",
+      "format": "perl",
+      "required": false,
+      "consumers": [
+        "optional offline VEP plugin; active NMD obtained by REST"
+      ],
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact",
+      "sha256": "0e3c45dd5ea2a49483b90597b0a386c9cf36d4f9defb2ec0e68b55d1d5a24c17"
+    },
+    {
+      "id": "remm_index",
+      "version": "0.4 hg38",
+      "purpose": "Index for remote regulatory prediction",
+      "sources": [
+        "https://kircherlab.bihealth.org/download/ReMM/ReMM.v0.4.hg38.tsv.gz.tbi"
+      ],
+      "raw": "results/intermediate/stage4/ReMM.v0.4.hg38.tsv.gz.tbi",
+      "processed": "results/intermediate/stage4/ReMM.v0.4.hg38.tsv.gz.tbi",
+      "kind": "copy",
+      "format": "tbi",
+      "md5": "c477b123abbe72c4aa66bf3abc18d9ab",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "Unchanged upstream artifact"
+    },
+    {
+      "id": "gnomad_nuclear",
+      "version": "4.1 joint",
+      "purpose": "Nuclear allele frequencies",
+      "sources": [
+        "https://storage.googleapis.com/gcp-public-data--gnomad/release/4.1/vcf/joint/gnomad.joint.v4.1.sites.chr{chrom}.vcf.bgz"
+      ],
+      "kind": "remote_tabix",
+      "chromosomes": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "X",
+        "Y"
+      ],
+      "consumers": [
+        "stage2_gnomad_remote_chr"
+      ],
+      "config_key": "stage2.gnomad.url_template",
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "remm_remote",
+      "version": "0.4 hg38",
+      "purpose": "Regulatory predictions",
+      "sources": [
+        "https://kircherlab.bihealth.org/download/ReMM/ReMM.v0.4.hg38.tsv.gz"
+      ],
+      "kind": "remote_tabix",
+      "index_resource": "remm_index",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [
+        "remm_index"
+      ],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "phylop",
+      "sources": [
+        "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/phyloP100way/hg38.phyloP100way.bw"
+      ],
+      "version": "hg38 100way",
+      "kind": "remote_bigwig",
+      "purpose": "Remote conservation scores at Stage 4",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "phastcons",
+      "sources": [
+        "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/phastCons100way/hg38.phastCons100way.bw"
+      ],
+      "version": "hg38 100way",
+      "kind": "remote_bigwig",
+      "purpose": "Remote conservation scores at Stage 4",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "vep_rest",
+      "sources": [
+        "https://rest.ensembl.org/vep/homo_sapiens/region"
+      ],
+      "version": "live, observed release recorded",
+      "kind": "remote_json",
+      "purpose": "Detailed variant annotations at Stage 3",
+      "consumers": [
+        "stage3_filter_route_reviewed"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "dbsnp",
+      "sources": [
+        "https://api.ncbi.nlm.nih.gov/variation/v0/vcf/file/set_rsids"
+      ],
+      "version": "live GCF_000001405.40; dbSNP release not pinned",
+      "kind": "remote_json",
+      "purpose": "Batch rsID annotation at Stage 4",
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "europe_pmc",
+      "sources": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/search"
+      ],
+      "version": "live; literature snapshot not pinned",
+      "kind": "remote_json",
+      "purpose": "Literature evidence at Stage 5",
+      "consumers": [
+        "stage5_literature"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "No setup network access; resource consumed remotely during analysis",
+      "readiness_policy": "deferred_to_consuming_analysis_stage"
+    },
+    {
+      "id": "spliceai_models",
+      "version": "1.3.1",
+      "kind": "software_assets",
+      "purpose": "Installed predictor model assets",
+      "sources": [
+        "https://github.com/Illumina/SpliceAI"
+      ],
+      "consumers": [
+        "stage4_variant_evidence"
+      ],
+      "required": true,
+      "indexes": [],
+      "dependencies": [],
+      "recipe": "software_assets"
+    }
+  ],
+  "limitations": [
+    "Mitochondrial Stage4 MITOMASTER/MITOMAP/MitoTIP/HmtVar inputs were not supplied or specified. This bootstrap covers the configured nuclear case; mitochondrial interpretation requires separate resource decisions.",
+    "Remote services are accessed during analysis; local resource readiness does not check their availability or freeze their responses."
+  ]
+}
